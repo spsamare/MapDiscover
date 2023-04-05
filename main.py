@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # agent1 = Agent()
     # all_sprites.add(agent1)
     agent_count = 0
-    for i in range(5):
+    for i in range(NUM_AGENTS):
         all_sprites.add(
             Agent(
                 id_num=agent_count,
@@ -37,7 +37,8 @@ if __name__ == '__main__':
         clock.tick(FPS)
         if time_world % (FPS // 4) == 0:
             for agent in all_sprites:
-                agent.snapshot(t=time_world)
+                pass  # agent.snapshot(t=time_world)
+                # Uncomment to save the agents' views
 
         time_world += 1
 

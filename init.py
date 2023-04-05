@@ -17,3 +17,5 @@ BACKGROUND = pg.image.load("res/map-blueprint.jpg")
 BACKGROUND = pg.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
 
 FPS = 10
+
+NUM_AGENTS = 5
