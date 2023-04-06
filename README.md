@@ -31,6 +31,17 @@ Run the code:
 python main.py
 ```
 
+Generate random maps:
+```python
+python map_manipulate.py
+```
+You need to uncomment the line `# generate()` to generate a new square grid layout.
+The deformation is carried out in the following line with `deform()`.
+To include the new map as the layout, [init.py](init.py) needs to be modified.
+```python
+BACKGROUND = pg.image.load("res/map-blueprint.jpg")
+```
+
 Example view of individual agents:
 
 ![agent0](res/a_0.gif)
