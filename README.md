@@ -14,6 +14,11 @@ labelling with the convention `agentID_TTT.jpg`)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="res/map-grid.jpg" width="100">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="res/map-distorted.jpg" width="100">
 
+- A smoother deformation can be generated with [map_manipulation_smooth.py](map_manipulation_smooth.py)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="test/image001.jpg" width="100">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="test/image001-distorted.jpg" width="100">
+
 ### Notes:
 - Agents' snapshots are saved with time, which is converted to three digits.
 To save beyond 1000 snapshots, modify `zfill(3)` under `Agent::snap()` in [agent_definition.py](agent_definitions.py). 

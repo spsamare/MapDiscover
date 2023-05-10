@@ -12,7 +12,7 @@ BRANCH_PROB = .5
 MAP_X = [*range(0, MAP_WIDTH, DOT_GAP * BLOCK_WIDTH)]
 MAP_Y = [*range(0, MAP_WIDTH, DOT_GAP * BLOCK_WIDTH)]
 SHOW_MAP = False
-SHIFT_GAP = 5
+SHIFT_GAP = 5  # 5
 
 
 def show(img, height=300, title='untitled'):
@@ -132,16 +132,16 @@ def generate():
 def deform(map_=None):
     if map_ is None:
         map_ = 'res/map-grid'
-    x = np.linspace(0, 2 * np.pi, MAP_WIDTH + 1)
+    # x = np.linspace(0, 2 * np.pi, MAP_WIDTH + 1)
+    x = np.linspace(0, DOT_GAP * BLOCK_WIDTH - 1, DOT_GAP * BLOCK_WIDTH)
     shifts = []
-    steps = 10
+    steps = (NUM_BLOCKS + 1) * NUM_BLOCKS * 2
     for i in range(steps):
         y_diff = -1
+        this_mag = randint(-99, 100)
+        mag_shift = np.cumsum(randint(-2, 3, DOT_GAP * BLOCK_WIDTH)) + this_mag
         while not y_diff > 0:
-            y = np.convolve(randint(0, 100) * np.sin(randint(0, 10) * x), randint(0, 100) * np.cos(randint(0, 10) * x),
-                            'same')
-            # y = randint(1, 2) * np.sin(randint(1, 2) * x) + \
-            #    randint(1, 2) * np.sin(randint(1, 2) * x + 2 * np.pi * np.random.rand())
+            y = np.multiply(mag_shift, np.sin(np.pi * x / (DOT_GAP * BLOCK_WIDTH)))
             # print(y.min(), y.max())
             y_diff = y.max() - y.min()
         y_new = 2 * y / y_diff
@@ -152,22 +152,42 @@ def deform(map_=None):
     rows, cols = old_map.shape
     # rot_mat = cv.getRotationMatrix2D((cols / 2, rows / 2), 360 // steps, 1)
 
+    mod_map_0 = 0 * np.ones((MAP_WIDTH + 1, MAP_WIDTH + 1))
+    mod_map_1 = 0 * np.ones((MAP_WIDTH + 1, MAP_WIDTH + 1))
+    row_center = 0
+    col_center = 0
     for k in tqdm(range(steps)):
-        mod_map = 255 * np.ones((MAP_WIDTH + 1, MAP_WIDTH + 1))
+        #
         t_shift = randint(SHIFT_GAP // 2, SHIFT_GAP + 1)
-        for i in range(MAP_WIDTH + 1):
-            this_shift = shifts[k][i] * t_shift  # randint(SHIFT_GAP//2, SHIFT_GAP + 1)
-            for j in range(MAP_WIDTH + 1):
-                if 0 <= j + int(this_shift) <= MAP_WIDTH:
-                    if k % 2 == 0:
-                        mod_map[i, j + int(this_shift)] = old_map[i, j]
-                    else:
-                        mod_map[j + int(this_shift), i] = old_map[j, i]
-        old_map = mod_map.copy()
-        rot_mat = cv.getRotationMatrix2D((cols / 2, rows / 2), randint(0, 360), 1)
-        # rot_mat = cv.getRotationMatrix2D((cols / 2, rows / 2), 360 // steps, 1)
-        old_map = cv.warpAffine(old_map, rot_mat, (cols, rows))
-        show(img=mod_map)
+        this_shift = shifts[k] * t_shift
+        # rows first
+        if k < steps // 2:
+            row_center_val = (row_center+1)*DOT_GAP*BLOCK_WIDTH
+            col_center_val = col_center*DOT_GAP*BLOCK_WIDTH
+            for i in range(row_center_val-LINE_WIDTH, row_center_val+LINE_WIDTH+1):
+                for j in range(0, DOT_GAP*BLOCK_WIDTH):
+                    # print(i, j)
+                    mod_map_0[i + int(this_shift[j]), j + col_center_val] = old_map[i, j + col_center_val]
+            col_center += 1
+            if col_center > NUM_BLOCKS:
+                col_center = 0
+                row_center += 1
+        else:
+            if row_center > NUM_BLOCKS:
+                col_center += 1
+                row_center = 0
+            row_center_val = row_center*DOT_GAP*BLOCK_WIDTH
+            col_center_val = col_center*DOT_GAP*BLOCK_WIDTH
+            for j in range(col_center_val-LINE_WIDTH, col_center_val+LINE_WIDTH+1):
+                for i in range(0, DOT_GAP*BLOCK_WIDTH):
+                    # print(i, j)
+                    mod_map_1[i + row_center_val, j + int(this_shift[i])] = old_map[i + row_center_val, j]
+            row_center += 1
+    show(img=mod_map_0)
+    show(img=mod_map_1)
+    mod_map = (mod_map_0 + mod_map_1)
+    old_map = mod_map.copy()
+    show(img=mod_map)
     """    
     x_new = [*range(0, MAP_WIDTH + 1)]
     for x_ in x_new:
@@ -189,6 +209,6 @@ def sharpening(img):
 
 
 if __name__ == '__main__':
-    generate()
-    # img_ = 'test/image001'
-    deform()
+    # generate()
+    img_ = 'test/image005'
+    deform(map_=img_)
