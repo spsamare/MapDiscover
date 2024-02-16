@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 DOT_GAP = 2
 BLOCK_WIDTH = 20
-LINE_WIDTH = 10  # 4
+LINE_WIDTH = 4  # 4
 NUM_BLOCKS = 10
 MAP_WIDTH = DOT_GAP * BLOCK_WIDTH * (NUM_BLOCKS + 1)
 BRANCH_PROB = .5
@@ -102,7 +102,9 @@ class Dotter:
         self.dot_list.remove(self)
 
 
-def generate():
+def generate(map_=None):
+    if map_ is None:
+        map_ = 'map-grid'
     my_map = 255 * np.ones((MAP_WIDTH + 1, MAP_WIDTH + 1), dtype=np.float32)
     occupancy = np.zeros((NUM_BLOCKS + 2, NUM_BLOCKS + 2))
     occupancy[0, :] = 1
@@ -126,12 +128,12 @@ def generate():
         # print(occupancy)
         # show(img=my_map)
 
-    cv.imwrite('res/map-grid.jpg', my_map)
+    cv.imwrite('res/' + map_ + '.jpg', my_map)
 
 
 def deform(map_=None):
     if map_ is None:
-        map_ = 'res/map-grid'
+        map_ = 'map-grid'
     # x = np.linspace(0, 2 * np.pi, MAP_WIDTH + 1)
     x = np.linspace(0, DOT_GAP * BLOCK_WIDTH - 1, DOT_GAP * BLOCK_WIDTH)
     shifts = []
@@ -148,7 +150,7 @@ def deform(map_=None):
         shifts.append(y_new)
     print("Shifts are generated")
 
-    old_map = 255 - cv.imread(map_ + '.jpg', cv.IMREAD_GRAYSCALE)
+    old_map = 255 - cv.imread('res/' + map_ + '.jpg', cv.IMREAD_GRAYSCALE)
     rows, cols = old_map.shape
     # rot_mat = cv.getRotationMatrix2D((cols / 2, rows / 2), 360 // steps, 1)
 
@@ -209,6 +211,7 @@ def sharpening(img):
 
 
 if __name__ == '__main__':
-    # generate()
-    img_ = 'test/image005'
-    deform(map_=img_)
+    for map_id in range(100):
+        generate(map_=str(map_id))
+        img_ = 'test/image005'
+        deform(map_=str(map_id))
