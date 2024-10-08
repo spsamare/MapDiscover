@@ -11,7 +11,7 @@ MAP_WIDTH = DOT_GAP * BLOCK_WIDTH * (NUM_BLOCKS + 1)
 BRANCH_PROB = .5
 MAP_X = [*range(0, MAP_WIDTH, DOT_GAP * BLOCK_WIDTH)]
 MAP_Y = [*range(0, MAP_WIDTH, DOT_GAP * BLOCK_WIDTH)]
-SHOW_MAP = False
+SHOW_MAP = True
 SHIFT_GAP = 5  # 5
 
 
@@ -126,7 +126,7 @@ def generate(map_=None):
             _.grow()
         # print(len(all_dots))
         # print(occupancy)
-        # show(img=my_map)
+    show(img=my_map)
 
     cv.imwrite('res/' + map_ + '.jpg', my_map)
 
