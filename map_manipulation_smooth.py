@@ -6,7 +6,7 @@ from tqdm import tqdm
 DOT_GAP = 2
 BLOCK_WIDTH = 20
 LINE_WIDTH = 4  # 4
-NUM_BLOCKS = 10
+NUM_BLOCKS = 20
 MAP_WIDTH = DOT_GAP * BLOCK_WIDTH * (NUM_BLOCKS + 1)
 BRANCH_PROB = .5
 MAP_X = [*range(0, MAP_WIDTH, DOT_GAP * BLOCK_WIDTH)]
@@ -35,7 +35,7 @@ class Dotter:
     def __init__(self, big_map, big_occupancy, dot_list, origin, tail=-1):
         self.xy = origin
         self.branches = [0, 1, 2, 3]
-        p = .5  # 1 - (np.sum(big_occupancy) / (NUM_BLOCKS + 2) ** 2) ** 2
+        p = BRANCH_PROB  # 1 - (np.sum(big_occupancy) / (NUM_BLOCKS + 2) ** 2) ** 2
         self.prob = p * np.ones(4)
         self.place = [1, 1, 1, 1]
         if tail >= 0:
@@ -196,7 +196,7 @@ def deform(map_=None):
         mod_map[x_, y_new[x_]] = 0
     """
     mod_map = sharpening(mod_map)
-    cv.imwrite(map_ + '-distorted.jpg', 255 - mod_map)
+    cv.imwrite('res/' + map_ + '-distorted.jpg', 255 - mod_map)
 
 
 def sharpening(img):
@@ -211,7 +211,7 @@ def sharpening(img):
 
 
 if __name__ == '__main__':
-    for map_id in range(100):
+    for map_id in range(1):
         generate(map_=str(map_id))
-        img_ = 'test/image005'
+        # img_ = 'test/image005'
         deform(map_=str(map_id))
